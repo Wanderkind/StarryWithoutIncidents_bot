@@ -95,7 +95,7 @@ async def set_daily_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Schedule a new job
     job_queue.run_daily(
         send_daily_status, 
-        time=datetime.time(hour=22, minute=33), 
+        time=datetime.time(hour=22, minute=36), 
         chat_id=chat_id, 
         name=str(chat_id)
     )
