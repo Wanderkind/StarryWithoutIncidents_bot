@@ -10,6 +10,9 @@ from telegram.ext import (
     ContextTypes
 )
 
+# Time at which report is sent daily (KST)
+hr, mn = 8, 0
+
 # Load bot token from environment variables (Railway uses this)
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -46,16 +49,16 @@ def get_days_without_incident():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message when the bot starts."""
     await update.message.reply_text(
-        "👋 Hello! I track how many days have passed without an incident.\n\n"
-        "✅ Use /status to check the current count.\n"
-        "⚠️ Admins can use /reset to reset the counter.\n"
-        "📅 Daily messages are sent automatically."
+        "👋 안녕하세요! 춤별혼의 무사고 운영을 기원하는 ☆춤별혼 무사고봇☆입니다.\n\n"
+        f"📅 무사고 레포트는 매일 {hr:02d}시 {mn:02d}분에 자동으로 전송됩니다."
+        "✅ 현재 무사고 일수를 확인하려면 /status를 입력하세요.\n"
+        "⚠️ 사고 발생 시 관리자는 /reset를 입력해 카운터를 리셋할 수 있습니다.\n"
     )
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the number of days without an incident."""
     days = get_days_without_incident()
-    await update.message.reply_text(f"📅 Days without an incident: **{days}**")
+    await update.message.reply_text(f"✅ 춤별혼 무사고 [{days:03d}일차]")
 
 async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Check if the user is an admin in the chat."""
@@ -69,38 +72,18 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Reset the incident counter (admin-only)."""
     if not await is_admin(update, context):
-        await update.message.reply_text("❌ Only an admin can reset the incident count.")
+        await update.message.reply_text("❌ 관리자만 카운터를 리셋할 수 있습니다.")
         return
     
     incident_data["last_reset"] = str(datetime.date.today())
     save_data(incident_data)
-    await update.message.reply_text("🔴 Incident recorded. Counter reset to **0**.")
+    await update.message.reply_text("🔴 사고가 발생했습니다. 현재 춤별혼 무사고 [000일차]입니다.")
 
 async def send_daily_status(context: CallbackContext):
     """Send a daily update message to the group."""
     chat_id = context.job.chat_id
     days = get_days_without_incident()
-    await context.bot.send_message(chat_id=chat_id, text=f"📅 Days without an incident: **{days}**")
-
-async def set_daily_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Schedule the bot to send a daily update at 9:00 AM."""
-    chat_id = update.message.chat_id
-    job_queue = context.job_queue
-
-    # Remove existing job for this chat (if any)
-    existing_jobs = job_queue.get_jobs_by_name(str(chat_id))
-    for job in existing_jobs:
-        job.schedule_removal()
-
-    # Schedule a new job
-    job_queue.run_daily(
-        send_daily_status, 
-        time=datetime.time(hour=9, minute=0), 
-        chat_id=chat_id, 
-        name=str(chat_id)
-    )
-
-    await update.message.reply_text("✅ Daily updates scheduled at **9:00 AM**.")
+    await context.bot.send_message(chat_id=chat_id, text=f"✅ 춤별혼 무사고 [{days:03d}일차]")
 
 def main():
     """Run the bot."""
