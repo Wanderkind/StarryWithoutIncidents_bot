@@ -64,7 +64,7 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     bot = context.bot
     
     member = await bot.get_chat_member(chat.id, user.id)
-    return member.status in {ChatMember.ADMINISTRATOR, ChatMember.CREATOR}
+    return member.status in {ChatMember.ADMINISTRATOR, ChatMember.OWNER}
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Reset the incident counter (admin-only)."""
