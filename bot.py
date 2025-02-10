@@ -102,7 +102,14 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("reset", reset))
-
+    
+    app.job_queue.run_daily(
+        send_daily_status, 
+        time=datetime.time(hour=(hr+15)%24, minute=mn),
+        chat_id=int(os.getenv("CHAT_ID")),
+        name="daily_status"
+    )
+    
     logging.info("🚀 Bot is running...")
     app.run_polling()
 
