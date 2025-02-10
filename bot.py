@@ -83,7 +83,7 @@ async def send_daily_status(context: CallbackContext):
     await context.bot.send_message(chat_id=chat_id, text=f"📅 Days without an incident: **{days}**")
 
 async def set_daily_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Schedule the bot to send a daily update at 9:00 AM."""
+    """Schedule the bot to send a daily update at designated time."""
     chat_id = update.message.chat_id
     job_queue = context.job_queue
 
@@ -95,7 +95,7 @@ async def set_daily_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Schedule a new job
     job_queue.run_daily(
         send_daily_status, 
-        time=datetime.time(hour=22, minute=36), 
+        time=datetime.time(hour=22, minute=39), 
         chat_id=chat_id, 
         name=str(chat_id)
     )
