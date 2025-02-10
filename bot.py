@@ -12,7 +12,7 @@ from telegram.ext import (
 
 def adjustment():
     now_utc = datetime.datetime.utcnow()
-    return 1 if now_utc.hour < 15 else 0
+    return 1 if now_utc.hour >= 15 else 0
 
 # Time at which report is sent daily (KST)
 hr, mn = 8, 0
