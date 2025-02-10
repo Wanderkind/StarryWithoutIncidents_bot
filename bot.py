@@ -10,6 +10,10 @@ from telegram.ext import (
     ContextTypes
 )
 
+def adjustment():
+    now_utc = datetime.datetime.utcnow()
+    return 1 if now_utc.hour < 15 else 0
+
 # Time at which report is sent daily (KST)
 hr, mn = 8, 0
 
@@ -58,7 +62,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the number of days without an incident."""
-    days = get_days_without_incident()
+    days = get_days_without_incident() + adjustment()
     await update.message.reply_text(f"✅ 춤별혼 무사고 [{days:03d}일차]")
 
 async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -83,7 +87,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def send_daily_status(context: CallbackContext):
     """Send a daily update message to the group."""
     chat_id = context.job.chat_id
-    days = get_days_without_incident()
+    days = get_days_without_incident() + adjustment()
     await context.bot.send_message(chat_id=chat_id, text=f"✅ 춤별혼 무사고 [{days:03d}일차]")
 
 def main():
