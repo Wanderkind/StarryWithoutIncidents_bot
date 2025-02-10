@@ -39,6 +39,7 @@ def save_data(data):
         json.dump(data, file)
 
 incident_data = load_data()
+incident_data["last_reset"] = '2023-09-02'
 
 def get_days_without_incident():
     """Calculate the number of days since the last recorded incident."""
