@@ -95,12 +95,15 @@ async def set_daily_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Schedule a new job
     job_queue.run_daily(
         send_daily_status, 
-        time=datetime.time(hour=13, minute=41), 
+        time=datetime.time(hour=23, minute=0), 
         chat_id=chat_id, 
         name=str(chat_id)
     )
 
     await update.message.reply_text("✅ Daily updates scheduled at **9:00 AM**.")
+
+async def debug(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info(f"Received command: {update.message.text} from {update.message.from_user.id}")
 
 def main():
     """Run the bot."""
@@ -115,6 +118,7 @@ def main():
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("reset", reset))
     app.add_handler(CommandHandler("setdaily", set_daily_update))
+    app.add_handler(CommandHandler("debug", debug))
 
     logging.info("🚀 Bot is running...")
     app.run_polling()
