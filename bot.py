@@ -15,7 +15,7 @@ def adjustment():
     return 1 if now_utc.hour >= 15 else 0
 
 # Time at which report is sent daily (KST)
-hr, mn = 8, 0
+hr, mn = 2, 0
 
 # Load bot token from environment variables (Railway uses this)
 TOKEN = os.getenv("BOT_TOKEN")
